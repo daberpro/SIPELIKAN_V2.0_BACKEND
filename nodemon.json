@@ -1,0 +1,11 @@
+{
+    "watch": [
+        "src",
+        "prisma"
+    ],
+    "ext": "js,ts,prisma",
+    "ignore": [
+        "node_modules"
+    ],
+    "exec": "node src/server.js"
+}
