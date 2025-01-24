@@ -49,7 +49,7 @@ penambahan route dan schema pada user untuk membuat akun dengan tiga rule yaitu
 1. ADMIN
 2. USER
 3. OPERATOR
-> Note \ 
+> Note \
 > akun yang memiliki akses tertinggi yaitu akun ADMIN yang dapat mengubah atau mengedit role pada akun OPERATOR/USER
 
 #### Password Generator
