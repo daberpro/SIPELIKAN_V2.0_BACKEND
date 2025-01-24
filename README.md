@@ -8,7 +8,8 @@ adapun module - module atau packages yang digunakan pada repositori ini yaitu
 3. Prisma ORM
 4. nodemon (development only)
 5. express-validator
-6. bcrypt \
+6. bcrypt
+
 database yang digunakan pada project ini yaitu `MySql`
 > Note \
 > web server pada repositori ini menggunakan sistem \
