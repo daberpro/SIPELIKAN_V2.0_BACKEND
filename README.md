@@ -39,4 +39,5 @@ npx prisma migrate dev --name "{description}"
 ```
 dimana `{description}` merupakan deskripsi terkini mengenai migrasi yang dilakukan
 
-
+### Dokumentasi API
+[Dokumntasi Endpoint API Sipelikan V2.0](https://documenter.getpostman.com/view/41333421/2sAYQdjVpp)
