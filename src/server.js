@@ -7,22 +7,20 @@ import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import admin from "./admin/index.js";
+import user from "./user/index.js";
+import VerifyUser from "./middleware/VerifyUser.js";
 dotenv.config();
 
+const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
 const server = express();
 server.use(express.json());
 server.use(cookieParser(process.env.COOKIE_SECRET));
 server.use("/admin",admin);
-
-server.get("/api-v2.0/",(req,res)=>{
-    res.json({
-        message: "test server v2.0"
-    });
-});
+server.use("/user",user);
 
 const validateUserReq = [
-    body("username").isString().withMessage("username harus diisi"),
+    body("email").isString().withMessage("email harus diisi"),
     body("password").isString().withMessage("password wajib diisi"),
     (req,res,next) =>{
         const errors = validationResult(req);
@@ -34,6 +32,13 @@ const validateUserReq = [
         next();
     }
 ];
+
+server.get("/api-v2.0/",(req,res)=>{
+    res.json({
+        message: "test server v2.0"
+    });
+});
+
 server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
 
     let token;
@@ -42,9 +47,19 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
 
         const user = await prisma.user.findFirst({
             where:{
-                username: req.body.username
+                email: req.body.email
             }
         });
+
+        if(!user){
+            return res.status(403).json({
+                errors: [
+                    {
+                        msg: "email tidak ditemukan"
+                    }
+                ]
+            });
+        }
     
         if(!bcrypt.compareSync(req.body.password,user.password)){
             return res.status(403).json({
@@ -58,7 +73,7 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
     
         token = jwt.sign(
             {
-                username: user.username
+                email: user.email
             },
             process.env.JWT_SECRET, 
             { 
@@ -85,6 +100,7 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
         });
     }
 
+    res.cookie("sipelikan_token",token);
     res.json({
         token,
         message: "login berhasil",
@@ -92,6 +108,53 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
     });
 });
 
+server.post("/api-v2.0/add-user/",validateUserReq,async (req,res)=>{
+    
+    const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+    try{
+        const user = await prisma.user.create({
+            data:{
+                email: req.body.email,
+                password: bcrypt.hashSync(req.body.password,salt),
+                token: "",
+                role: "USER",
+                name: req.body.name
+            }
+        });
+    }catch(err){
+        return res.json({
+            errors: [
+                {
+                    msg: ErrorHandler(err)
+                }
+            ]
+        });
+    }
+
+    res.json({
+        message: "berhasil mendaftar",
+        status: true
+    });
+});
+
+server.get("/api-v2.0/logout",VerifyUser,async (req,res)=>{
+
+    res.clearCookie('sipelikan_token');
+    await prisma.user.update({
+        where:{
+            email: req.email
+        },
+        data:{
+            token: ''
+        }
+    });
+
+    res.json({
+        message: "Logout berhasil",
+        status: true
+    });
+
+});
 
 server.listen(process.env.PORT,_=>{
     console.log(`Server running on port ${process.env.PORT}`);

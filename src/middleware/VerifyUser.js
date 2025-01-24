@@ -6,19 +6,30 @@ const prisma = new PrismaClient();
 
 export default async function VerifyUser(req,res,next){
 
-    const raw = req.get("Authorization");
-    if(!raw){
-        return res.status(401).json({
-            errors: [
-                {
-                    msg: "Autentikasi gagal"
-                }
-            ]
-        });
+    let token = '';
+
+    if('sipelikan_token' in req.cookies){
+
+        token = req.cookies['sipelikan_token'];
+
+    }else{
+
+        const raw = req.get("Authorization");
+        if(!raw){
+            return res.status(401).json({
+                errors: [
+                    {
+                        msg: "Autentikasi gagal"
+                    }
+                ]
+            });
+        }
+        token = (raw || "Bearer ").split(" ")[1];
+        
     }
 
     let data = {};
-    const token = (raw || "Bearer ").split(" ")[1];
+
     try{
 
         data = jwt.decode(
@@ -52,7 +63,7 @@ export default async function VerifyUser(req,res,next){
 
         const user = await prisma.user.findFirst({
             where:{
-                username: data.username
+                email: data.email
             }
         });
 
@@ -66,7 +77,7 @@ export default async function VerifyUser(req,res,next){
             });
         }
 
-        req.username = user.username;
+        req.email = user.email;
 
     }catch(err){
         return res.status(401).json({

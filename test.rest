@@ -1,0 +1,81 @@
+@host = http://localhost
+@port = 4300
+
+# admin token
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTczNzczMTczNSwiZXhwIjoxNzM3ODE4MTM1fQ.24Q6ioi5hmnL1DReeOIUi66jjbi7lrirq-XCGd4KaBM
+
+# user token
+# @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzM3NzMzNjM1LCJleHAiOjE3Mzc4MjAwMzV9.GuZscMbyj7jCr0Nrni5aiNDOTajgd7iOojwih_k5ehU
+
+### Register user
+POST {{host}}:{{port}}/api-v2.0/add-user/
+Content-Type: application/json
+
+{
+    "email": "test@gmail.com",
+    "password": "123",
+    "name": "test"
+}
+
+### Login as User
+POST {{host}}:{{port}}/api-v2.0/login-user/
+Content-Type: application/json
+
+{
+    "email": "test@gmail.com",
+    "password": "123456"
+}
+
+### Login as Admin
+POST {{host}}:{{port}}/api-v2.0/login-user/
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123"
+}
+
+
+# ============= USER ==============
+### User get info
+GET {{host}}:{{port}}/user/api-v2.0/get-user
+Authorization: Bearer {{token}}
+
+### User update password
+POST {{host}}:{{port}}/user/api-v2.0/update-user/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "password": "123456"
+}
+
+# ============= USER ==============
+
+# ============= ADMIN ==============
+### Admin get all users
+GET {{host}}:{{port}}/admin/api-v2.0/get-users
+Authorization: Bearer {{token}}
+
+### Admin update user role
+POST {{host}}:{{port}}/admin/api-v2.0/update-user/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "role": "USER"
+}
+
+### Admin update user role
+POST {{host}}:{{port}}/admin/api-v2.0/add-user/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "role": "USER",
+    "email": "test2@gmail.com",
+    "password": "123",
+    "name": "test 2"
+}
+
+# ============= ADMIN ==============

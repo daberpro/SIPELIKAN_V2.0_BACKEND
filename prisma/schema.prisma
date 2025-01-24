@@ -16,19 +16,17 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  username String @unique
+  name String
+  email String @unique
   password String
+  role Role @default(USER)
   token String?
-  quotes Quote[]
 
   @@map("users")
 }
 
-model Quote{
-  id Int @id @default(autoincrement())
-  quote String
-  authorId Int
-  author User @relation(fields: [authorId], references: [id])
-
-  @@map("quotes")
+enum Role {
+  ADMIN
+  OPERATOR
+  USER
 }

@@ -4,7 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "hash:password" : "node src/console/index.js"
   },
   "keywords": [],
   "author": "",
