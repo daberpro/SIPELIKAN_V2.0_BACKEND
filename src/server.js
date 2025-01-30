@@ -9,11 +9,14 @@ import jwt from "jsonwebtoken";
 import admin from "./admin/index.js";
 import user from "./user/index.js";
 import VerifyUser from "./middleware/VerifyUser.js";
+import { ROLE } from "./util/role.js";
+import cors from 'cors';
 dotenv.config();
 
 const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
 const server = express();
+server.use(cors("*"));
 server.use(express.json());
 server.use(cookieParser(process.env.COOKIE_SECRET));
 server.use("/admin",admin);
@@ -26,12 +29,18 @@ const validateUserReq = [
         const errors = validationResult(req);
         if(!errors.isEmpty()){
             return res.status(400).json({
-                errors: errors.array()
+                errors: errors.array().map(d => ({message: d.msg}))
             });
         }
         next();
     }
 ];
+
+server.get("/",(req,res)=>{
+    res.json({
+        message: "SIPELIKAN Server VERSION 2.0"
+    });
+});
 
 server.get("/api-v2.0/",(req,res)=>{
     res.json({
@@ -55,9 +64,10 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
             return res.status(403).json({
                 errors: [
                     {
-                        msg: "email tidak ditemukan"
+                        message: "email tidak ditemukan"
                     }
-                ]
+                ],
+                status: false
             });
         }
     
@@ -65,9 +75,10 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
             return res.status(403).json({
                 errors: [
                     {
-                        msg: "password salah"
+                        message: "password salah"
                     }
-                ]
+                ],
+                status: false
             });
         }
     
@@ -94,9 +105,10 @@ server.post("/api-v2.0/login-user/",validateUserReq,async (req,res)=>{
         return res.json({
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
-            ]
+            ],
+            status: false
         });
     }
 
@@ -117,7 +129,7 @@ server.post("/api-v2.0/add-user/",validateUserReq,async (req,res)=>{
                 email: req.body.email,
                 password: bcrypt.hashSync(req.body.password,salt),
                 token: "",
-                role: "USER",
+                role: ROLE.USER,
                 name: req.body.name
             }
         });
@@ -125,7 +137,7 @@ server.post("/api-v2.0/add-user/",validateUserReq,async (req,res)=>{
         return res.json({
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });

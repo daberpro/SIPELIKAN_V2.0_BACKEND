@@ -17,9 +17,10 @@ export default async function VerifyUser(req,res,next){
         const raw = req.get("Authorization");
         if(!raw){
             return res.status(401).json({
+                status: false,
                 errors: [
                     {
-                        msg: "Autentikasi gagal"
+                        message: "Autentikasi gagal"
                     }
                 ]
             });
@@ -40,9 +41,10 @@ export default async function VerifyUser(req,res,next){
     }catch(err){
         
         return res.status(401).json({
+            status: false,
             errors: [
                 {
-                    msg: err.message()
+                    message: err.message()
                 }
             ]
         });
@@ -51,9 +53,10 @@ export default async function VerifyUser(req,res,next){
 
     if(!data){
         return res.status(401).json({
+            status: false,
             errors: [
                 {
-                    msg: "Invalid token data"
+                    message: "Invalid token data"
                 }
             ]
         });
@@ -69,9 +72,10 @@ export default async function VerifyUser(req,res,next){
 
         if(!user){
             return res.status(401).json({
+                status: false,
                 errors: [
                     {
-                        msg: "Invalid token data"
+                        message: "Invalid token data"
                     }
                 ]
             });
@@ -81,9 +85,10 @@ export default async function VerifyUser(req,res,next){
 
     }catch(err){
         return res.status(401).json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });

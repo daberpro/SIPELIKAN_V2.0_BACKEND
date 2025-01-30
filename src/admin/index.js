@@ -28,18 +28,21 @@ admin.use(async (req,res,next)=>{
         }
 
         return res.status(403).json({
+            status: false,
             errors: [
                 {
-                    msg: "Akses ditolak"
+                    message: "Akses ditolak"
                 }
-            ]
+            ],
+            status: false
         });
 
     }catch(err){
         return res.json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });
@@ -53,7 +56,7 @@ const validateUserReq = [
         const errors = validationResult(req);
         if(!errors.isEmpty()){
             return res.status(400).json({
-                errors: errors.array()
+                errors: errors.array().map(d => ({message: d.msg}))
             });
         }
         next();
@@ -73,9 +76,10 @@ admin.post("/api-v2.0/add-user/",validateUserReq,async (req,res)=>{
         });
     }catch(err){
         return res.json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });
@@ -93,7 +97,7 @@ const validateUserUpdateReq = [
         const errors = validationResult(req);
         if(!errors.isEmpty()){
             return res.status(400).json({
-                errors: errors.array()
+                errors: errors.array().map(d => ({message: d.msg}))
             });
         }
         next();
@@ -115,15 +119,17 @@ admin.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
         if(user.email === req.email){
         
             (req.body?.password)? data['password'] = bcrypt.hashSync(req.body?.password,salt) : null;
+            (req.body?.name)? data['name'] = req.body?.name : null;
         
         }else{
 
             (req.body?.role)? data['role'] = req.body?.role : null;
             if(!(data['role'] in ROLE)){
                 return res.status(400).json({
+                    status: false,
                     errors: [
                         {
-                            msg: "role yang dimasukan invalid"
+                            message: "role yang dimasukan invalid"
                         }
                     ]
                 });    
@@ -134,9 +140,10 @@ admin.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
         
         if(!user){
             return res.status(400).json({
+                status: false,
                 errors: [
                     {
-                        msg: "id user tidak ditemukan"
+                        message: "id user tidak ditemukan"
                     }
                 ]
             });
@@ -151,9 +158,10 @@ admin.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
 
     }catch(err){
         return res.json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });
@@ -175,15 +183,17 @@ admin.get("/api-v2.0/get-users",async (req,res)=>{
             select:{
                 email: true,
                 name: true,
-                role: true
+                role: true,
+                id: true
             }
         });
 
     }catch(err){
         return res.json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });

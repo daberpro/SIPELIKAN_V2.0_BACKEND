@@ -21,6 +21,7 @@ model User {
   password String
   role Role @default(USER)
   token String?
+  token_api String?
 
   @@map("users")
 }

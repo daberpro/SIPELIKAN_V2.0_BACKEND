@@ -6,6 +6,7 @@ CREATE TABLE `users` (
     `password` VARCHAR(191) NOT NULL,
     `role` ENUM('ADMIN', 'OPERATOR', 'USER') NOT NULL DEFAULT 'USER',
     `token` VARCHAR(191) NULL,
+    `token_api` VARCHAR(191) NULL,
 
     UNIQUE INDEX `users_email_key`(`email`),
     PRIMARY KEY (`id`)

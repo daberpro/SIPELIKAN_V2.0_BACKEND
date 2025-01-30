@@ -20,7 +20,7 @@ const validateUserReq = [
         const errors = validationResult(req);
         if(!errors.isEmpty()){
             return res.status(400).json({
-                errors: errors.array()
+                errors: errors.array().map(d => ({message: d.msg}))
             });
         }
         next();
@@ -33,7 +33,7 @@ const validateUserUpdateReq = [
         const errors = validationResult(req);
         if(!errors.isEmpty()){
             return res.status(400).json({
-                errors: errors.array()
+                errors: errors.array().map(d => ({message: d.msg}))
             });
         }
         next();
@@ -45,6 +45,7 @@ user.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
     const salt = await bcrypt.genSaltSync(SALT_ROUNDS);
     const data = {};
     (req.body?.password)? data['password'] = bcrypt.hashSync(req.body?.password,salt) : null;
+    (req.body?.name)? data['name'] = bcrypt.hashSync(req.body?.name,salt) : null;
 
     try{
         user = await prisma.user.findUnique({
@@ -55,9 +56,10 @@ user.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
     
         if(!user){
             return res.status(400).json({
+                status: false,
                 errors: [
                     {
-                        msg: "id user tidak ditemukan"
+                        message: "id user tidak ditemukan"
                     }
                 ]
             });
@@ -65,9 +67,10 @@ user.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
 
         if(user.email != req.email){
             return res.status(400).json({
+                status: false,
                 errors: [
                     {
-                        msg: "Akses ditolak"
+                        message: "Akses ditolak"
                     }
                 ]
             });
@@ -82,9 +85,10 @@ user.post("/api-v2.0/update-user/:id",validateUserUpdateReq,async (req,res)=>{
 
     }catch(err){
         return res.json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });
@@ -115,9 +119,10 @@ user.get("/api-v2.0/get-user",async (req,res)=>{
 
     }catch(err){
         return res.json({
+            status: false,
             errors: [
                 {
-                    msg: ErrorHandler(err)
+                    message: ErrorHandler(err)
                 }
             ]
         });

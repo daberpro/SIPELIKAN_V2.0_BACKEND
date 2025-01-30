@@ -14,7 +14,5 @@ function main(){
         process.stdin.pause(); 
     });
 
-    
-
 }
 main();
