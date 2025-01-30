@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon",
-    "hash:password": "node src/console/PasswordGenerator.js"
+    "hash:password": "node src/console/PasswordGenerator.js",
+    "start": "npx prisma migrate dev --name \"update\" && node src/server.js"
   },
   "keywords": [],
   "author": "",
