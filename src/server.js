@@ -20,7 +20,7 @@ const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
 const server = express();
 // view engine setup
-server.set('views', path.join(__dirname, '../views'));
+server.set('views', path.join(__dirname, '../../views'));
 server.set('view engine','ejs');
 server.use(cors("*"));
 server.use(express.json());

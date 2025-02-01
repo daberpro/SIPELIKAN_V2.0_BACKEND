@@ -2,6 +2,10 @@
 functions = "netlify/functions"
 command = "npm install ejs && npx prisma generate"
 
+[functions]
+  external_node_modules = ["express", "ejs"]
+  included_files = ["views/**"]
+
 [[redirects]]
 from = "/*"
 to = "/.netlify/functions/server"
