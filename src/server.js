@@ -1,7 +1,7 @@
 import {PrismaClient} from "@prisma/client";
 import { body, param, validationResult } from "express-validator";
 import { ErrorHandler } from "./util/error_handler.js";
-import { dirname } from 'node:path';
+import path,{ dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from "express";
 import dotenv from "dotenv";
@@ -15,11 +15,12 @@ import { ROLE } from "./util/role.js";
 import cors from 'cors';
 dotenv.config();
 
+// const __dirname = dirname(fileURLToPath(import.meta.url));
 const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
 const server = express();
 // view engine setup
-server.set('views', './views');
+server.set('views', path.join(__dirname, '../views'));
 server.set('view engine','ejs');
 server.use(cors("*"));
 server.use(express.json());
