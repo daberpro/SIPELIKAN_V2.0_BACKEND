@@ -1,6 +1,6 @@
 [build]
 functions = "netlify/functions"
-command = "npm install && npx prisma generate"
+command = "npm install ejs && npx prisma generate"
 
 [[redirects]]
 from = "/*"
