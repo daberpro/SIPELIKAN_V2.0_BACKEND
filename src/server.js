@@ -16,6 +16,7 @@ dotenv.config();
 const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
 const server = express();
+server.set('view engine','ejs');
 server.use(cors("*"));
 server.use(express.json());
 server.use(cookieParser(process.env.COOKIE_SECRET));
@@ -37,9 +38,7 @@ const validateUserReq = [
 ];
 
 server.get("/",(req,res)=>{
-    res.json({
-        message: "SIPELIKAN Server VERSION 2.0"
-    });
+    res.render('index');
 });
 
 server.get("/api-v2.0/",(req,res)=>{
@@ -168,6 +167,10 @@ server.get("/api-v2.0/logout",VerifyUser,async (req,res)=>{
 
 });
 
-server.listen(process.env.PORT,_=>{
-    console.log(`Server running on port ${process.env.PORT}`);
-});
+// Only use on development
+export const SipelikanServer = server;
+
+// Only use on production
+// server.listen(process.env.PORT,_=>{
+//     console.log(`Server running on port ${process.env.PORT}`);
+// });

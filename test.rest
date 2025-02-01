@@ -36,6 +36,17 @@ Content-Type: application/json
 }
 
 
+### Login as Admin
+POST https://api.hkprox.xyz/api-v2.0/login-user/
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123"
+}
+
+
+
 # ============= USER ==============
 ### User get info
 GET {{host}}:{{port}}/user/api-v2.0/get-user
